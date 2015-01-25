@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TEMPLATE_DIR=~/templates/$1
+
+#Creates a basic skeleton project directory	
+if [ -d $TEMPLATE_DIR ]; then
+	cp -r $TEMPLATE_DIR/* .
+	echo "Project initialized."
+else
+	echo "Template does not exist."
+fi
