@@ -20,6 +20,7 @@ all: release
 
 build-setup:
 	@mkdir -p build
+	@mkdir -p bin
 
 generate-depends:
 	$(CC) $(CFLAGS) -MM -MP -MF $(DEPS_FILE) $(SRC_FILES)
@@ -33,11 +34,11 @@ build-release: $(filter-out $(TEST_SRC:src/%.cpp=build/%.o), $(OBJ_FILES))
 #executable entry point. 
 #build-test: $(filter-out $(RELEASE_SRC:src/%.cpp=build/%.o), $(OBJ_FILES)) 
 #	$(CC) $(CFLAGS) -o $(TEST_EXE) $^
-	
+
 release: build-setup generate-depends build-release
 
 #test: build-setup generate-depends build-test
-	
+
 -include $(DEPS_FILE)
 
 clean:
@@ -48,6 +49,6 @@ clean:
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -c -o "$@" $^
-	
+
 redo: clean
 	main 
