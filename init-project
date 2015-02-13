@@ -1,6 +1,7 @@
 #!/bin/bash
+PREFIX=/usr/local/code-templates
 
-TEMPLATE_DIR=~/templates/$1
+TEMPLATE_DIR=$PREFIX/$1
 
 #Creates a basic skeleton project directory	
 if [ -d $TEMPLATE_DIR ]; then
