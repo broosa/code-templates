@@ -4,48 +4,42 @@ CFLAGS := $(CFLAGS) -Wall -ggdb
 
 SRC_DIR = src
 BUILD_DIR = build
-
-RELEASE_SRC = src/main.cpp
-
-RELEASE_EXE = bin/main.out
+BIN_DIR = bin
 
 DEPS_FILE = build/deps.d
 
-SRC_FILES = $(wildcard src/*.cpp)
-SRC = $(SRC_FILES:src/%=%)
-OBJ = $(SRC:.cpp=.o)
-OBJ_FILES = $(addprefix build/,$(OBJ))
+TARGET_FILE_NAMES = src/main.cpp src/statexam.cpp src/stattest.cpp
 
-all: release
+SRC_FILES = $(filter-out $(TARGET_FILE_NAMES),$(wildcard src/*.cpp))
+
+SRC = $(SRC_FILES:src/%=%)
+OBJ = $(SRC:%.cpp=%.o)
+OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(OBJ))
+
+all: stattest
 
 build-setup:
+
 	@mkdir -p build
 	@mkdir -p bin
 
-generate-depends:
+build-depends:
 	$(CC) $(CFLAGS) -MM -MP -MF $(DEPS_FILE) $(SRC_FILES)
 
-#Depends on all object files excpet for the one that contains the test main method
-#This is hacky. Fix later.
-build-release: $(filter-out $(TEST_SRC:src/%.cpp=build/%.o), $(OBJ_FILES))
-	$(CC) $(CFLAGS) -o $(RELEASE_EXE) $^
+build-exe: $(OBJ_FILES)
+	$(CC) $(CFLAGS) -o $(BIN_DIR)/$(notdir $(TGT_SRC:%.cpp=%)) $(TGT_SRC) $^
 
-#Same for test. Includes all .o files except for the one that contains the release
-#executable entry point. 
-#build-test: $(filter-out $(RELEASE_SRC:src/%.cpp=build/%.o), $(OBJ_FILES)) 
-#	$(CC) $(CFLAGS) -o $(TEST_EXE) $^
-
-release: build-setup generate-depends build-release
-
-#test: build-setup generate-depends build-test
-
+setup: build-setup build-depends
+	
+statexam: override TGT_SRC = src/main.cpp
+statexam: setup build-exe
+	
 -include $(DEPS_FILE)
 
 clean:
+	rm -rf ./bin/*
 	rm -rf ./build/*
 	rm -rf ./*.out
-
-%.cpp: %.o
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) $(CFLAGS) -c -o "$@" $^
