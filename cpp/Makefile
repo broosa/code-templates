@@ -16,7 +16,7 @@ SRC = $(SRC_FILES:src/%=%)
 OBJ = $(SRC:%.cpp=%.o)
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(OBJ))
 
-all: stattest
+all: main
 
 build-setup:
 
@@ -31,8 +31,8 @@ build-exe: $(OBJ_FILES)
 
 setup: build-setup build-depends
 	
-statexam: override TGT_SRC = src/main.cpp
-statexam: setup build-exe
+main: override TGT_SRC = src/main.cpp
+main: setup build-exe
 	
 -include $(DEPS_FILE)
 
